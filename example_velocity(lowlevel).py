@@ -29,7 +29,7 @@ d = {'FR_0':0, 'FR_1':1, 'FR_2':2,
 
 
 print(f'Running lib version: {lib_version()}')
-conn = unitreeConnection(LOW_WIFI_DEFAULTS)
+conn = unitreeConnection(LOW_WIRED_DEFAULTS)
 conn.startRecv()
 lcmd = lowCmd()
 # lcmd.encrypt = True
