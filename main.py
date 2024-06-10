@@ -4,6 +4,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import numpy as np
 from robot import Robot
+import threading
 
 
 class App(ttk.Window):
@@ -150,13 +151,16 @@ class ControlPanel(ttk.Frame):
     def start_movement(self):
         trajectory = self.map_widget.save_trajectory()
         try:
-            self.robot.move(trajectory)
+            self.movement_thread = threading.Thread(target=self.robot.move, args=(trajectory,))
+            self.movement_thread.start()
         except Exception as e:
             print("Something wrong with movement", e)
 
     def delete_point(self):
         self.map_widget.delete_last_point()
 
+    def stop_movement(self):
+        self.movement_thread.join()
 
 if __name__ == '__main__':
     app = App('Robot control', [1280, 720])
