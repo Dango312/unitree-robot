@@ -149,10 +149,13 @@ class ControlPanel(ttk.Frame):
         self.standDown_btn.grid(row=4, column=0, sticky='ew')
 
     def start_movement(self):
-        trajectory = self.map_widget.save_trajectory()
+        #trajectory = self.map_widget.save_trajectory()
         try:
-            self.movement_thread = threading.Thread(target=self.robot.move, args=(trajectory,))
-            self.movement_thread.start()
+            #self.movement_thread = threading.Thread(target=self.robot.move, args=(trajectory,))
+            #self.movement_thread.start()
+            trajectory = [[1, 0]]
+            self.robot.move(trajectory)
+            #self.draw_thread = threading.Thread(target=self.)
         except Exception as e:
             print("Something wrong with movement", e)
 
