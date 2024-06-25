@@ -153,7 +153,7 @@ class ControlPanel(ttk.Frame):
         try:
             #self.movement_thread = threading.Thread(target=self.robot.move, args=(trajectory,))
             #self.movement_thread.start()
-            trajectory = [[1, 0]]
+            trajectory = [[1, 0], [1, -1]]
             self.robot.move(trajectory)
             #self.draw_thread = threading.Thread(target=self.)
         except Exception as e:

@@ -47,9 +47,9 @@ Ephi.vfn = triangular(-130, -90, c=-115)
 Ephi.fn = triangular(-95, -50, c=-75)
 Ephi.nn = triangular(-60, -40, c=-50) #near negative
 Ephi.vnn = triangular(-45, -17, c=-30)
-Ephi.tnn = triangular(-20, -5, c=-14) #too near negative
-Ephi.o = triangular(-5, 5, c=0) #zero
-Ephi.tnp = triangular(5, 20, c=14)
+Ephi.tnn = triangular(-20, -7, c=-14) #too near negative
+Ephi.o = triangular(-7, 7, c=0) #zero
+Ephi.tnp = triangular(7, 20, c=14)
 Ephi.vnp = triangular(17, 45, c=30) #very near posiive
 Ephi.np = triangular(40, 60, c=50)
 Ephi.fp = triangular(50, 95, c=75) #far positive
@@ -59,22 +59,11 @@ Ephi.tvfp = R(140, 180)
 
 
 velocity_rules = Rule({
-
-    (distance.o, Ephi.tnn): V.o,
-    (distance.n, Ephi.tnn): V.vl,
-    (distance.f, Ephi.tnn): V.l,
-    (distance.vf, Ephi.tnn): V.l,
-
     (distance.o, Ephi.o): V.o,
     (distance.n, Ephi.o): V.l,
     (distance.f, Ephi.o): V.h,
     (distance.vf, Ephi.o): V.h,
     # positive angles
-    (distance.o, Ephi.tnp): V.o,
-    (distance.n, Ephi.tnp): V.vl,
-    (distance.f, Ephi.tnp): V.l,
-    (distance.vf, Ephi.tnp): V.l,
-
 })
 
 yawSpeed_rules = Rule({
@@ -306,9 +295,9 @@ class Robot():
         R2 = np.array([
             [0.05, 0, 0, 0, 0],
             [0, 0.05, 0, 0, 0],
-            [0, 0, 0.2, 0, 0],
-            [0, 0, 0, 0.2, 0],
-            [0, 0, 0, 0, 5]
+            [0, 0, 0.02, 0, 0],
+            [0, 0, 0, 0.02, 0],
+            [0, 0, 0, 0, 2]
         ])
 
         X = np.zeros((5, 1))
@@ -351,7 +340,7 @@ class Robot():
                 elif angle_to_turn < -180:
                     angle_to_turn += 360
 
-                if -5 < angle_to_turn < 5:
+                if -7 < angle_to_turn < 7:
                     angle_to_turn = 0
 
                 theta = np.degrees(np.arccos(np.dot(d, r) / (d_norm * r_norm)))
