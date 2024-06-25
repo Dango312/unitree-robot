@@ -59,36 +59,6 @@ Ephi.tvfp = R(140, 180)
 
 
 velocity_rules = Rule({
-    # negative angles
-    (distance.o, Ephi.tvfn): V.o,
-    (distance.n, Ephi.tvfn): V.vl,
-    (distance.f, Ephi.tvfn): V.vl,
-    (distance.vf, Ephi.tvfn): V.vl,
-
-    (distance.o, Ephi.vvfn): V.o,
-    (distance.n, Ephi.vvfn): V.vl,
-    (distance.f, Ephi.vvfn): V.vl,
-    (distance.vf, Ephi.vvfn): V.vl,
-
-    (distance.o, Ephi.vfn): V.o,
-    (distance.n, Ephi.vfn): V.vl,
-    (distance.f, Ephi.vfn): V.vl,
-    (distance.vf, Ephi.vfn): V.l,
-
-    (distance.o, Ephi.fn): V.o,
-    (distance.n, Ephi.fn): V.vl,
-    (distance.f, Ephi.fn): V.vl,
-    (distance.vf, Ephi.fn): V.l,
-
-    (distance.o, Ephi.nn): V.o,
-    (distance.n, Ephi.nn): V.vl,
-    (distance.f, Ephi.nn): V.vl,
-    (distance.vf, Ephi.nn): V.l,
-
-    (distance.o, Ephi.vnn): V.o,
-    (distance.n, Ephi.vnn): V.vl,
-    (distance.f, Ephi.vnn): V.l,
-    (distance.vf, Ephi.vnn): V.l,
 
     (distance.o, Ephi.tnn): V.o,
     (distance.n, Ephi.tnn): V.vl,
@@ -105,72 +75,43 @@ velocity_rules = Rule({
     (distance.f, Ephi.tnp): V.l,
     (distance.vf, Ephi.tnp): V.l,
 
-    (distance.o, Ephi.vnp): V.o,
-    (distance.n, Ephi.vnp): V.vl,
-    (distance.f, Ephi.vnp): V.l,
-    (distance.vf, Ephi.vnp): V.l,
-
-    (distance.o, Ephi.np): V.o,
-    (distance.n, Ephi.np): V.vl,
-    (distance.f, Ephi.np): V.vl,
-    (distance.vf, Ephi.np): V.l,
-
-    (distance.o, Ephi.fp): V.o,
-    (distance.n, Ephi.fp): V.vl,
-    (distance.f, Ephi.fp): V.vl,
-    (distance.vf, Ephi.fp): V.l,
-
-    (distance.o, Ephi.vfp): V.o,
-    (distance.n, Ephi.vfp): V.vl,
-    (distance.f, Ephi.vfp): V.vl,
-    (distance.vf, Ephi.vfp): V.l,
-
-    (distance.o, Ephi.vvfp): V.o,
-    (distance.n, Ephi.vvfp): V.vl,
-    (distance.f, Ephi.vvfp): V.vl,
-    (distance.vf, Ephi.vvfp): V.vl,
-
-    (distance.o, Ephi.tvfp): V.o,
-    (distance.n, Ephi.tvfp): V.vl,
-    (distance.f, Ephi.tvfp): V.vl,
-    (distance.vf, Ephi.tvfp): V.vl
 })
 
 yawSpeed_rules = Rule({
     # negative angles
-    (distance.o, Ephi.tvfn): yawSpeed.fn,
-    (distance.n, Ephi.tvfn): yawSpeed.fn,
-    (distance.f, Ephi.tvfn): yawSpeed.fn,
-    (distance.vf, Ephi.tvfn): yawSpeed.fn,
+    (distance.o, Ephi.tvfn): yawSpeed.vvfn,
+    (distance.n, Ephi.tvfn): yawSpeed.vvfn,
+    (distance.f, Ephi.tvfn): yawSpeed.vvfn,
+    (distance.vf, Ephi.tvfn): yawSpeed.vvfn,
 
     (distance.o, Ephi.vvfn): yawSpeed.sn,
     (distance.n, Ephi.vvfn): yawSpeed.sn,
-    (distance.f, Ephi.vvfn): yawSpeed.fn,
-    (distance.vf, Ephi.vvfn): yawSpeed.fn,
+    (distance.f, Ephi.vvfn): yawSpeed.vvfn,
+    (distance.vf, Ephi.vvfn): yawSpeed.vvfn,
 
     (distance.o, Ephi.vfn): yawSpeed.sn,
     (distance.n, Ephi.vfn): yawSpeed.sn,
-    (distance.f, Ephi.vfn): yawSpeed.sn,
-    (distance.vf, Ephi.vfn): yawSpeed.sn,
+    (distance.f, Ephi.vfn): yawSpeed.vvfn,
+    (distance.vf, Ephi.vfn): yawSpeed.vvfn,
 
     (distance.o, Ephi.fn): yawSpeed.sn,
-    (distance.n, Ephi.fn): yawSpeed.sn,
-    (distance.f, Ephi.fn): yawSpeed.sn,
-    (distance.vf, Ephi.fn): yawSpeed.sn,
+    (distance.n, Ephi.fn): yawSpeed.vfn,
+    (distance.f, Ephi.fn): yawSpeed.vvfn,
+    (distance.vf, Ephi.fn): yawSpeed.vvfn,
 
     (distance.o, Ephi.nn): yawSpeed.vsn,
-    (distance.n, Ephi.nn): yawSpeed.vsn,
-    (distance.f, Ephi.nn): yawSpeed.vsn,
-    (distance.vf, Ephi.nn): yawSpeed.vsn,
+    (distance.n, Ephi.nn): yawSpeed.vfn,
+    (distance.f, Ephi.nn): yawSpeed.vvfn,
+    (distance.vf, Ephi.nn): yawSpeed.vvfn,
 
-    (distance.o, Ephi.vnn): yawSpeed.vsn,
-    (distance.n, Ephi.vnn): yawSpeed.vsn,
-    (distance.f, Ephi.vnn): yawSpeed.vsn,
-    (distance.vf, Ephi.vnn): yawSpeed.vsn,
+    (distance.o, Ephi.vnn): yawSpeed.sn,
+    (distance.n, Ephi.vnn): yawSpeed.sn,
+    (distance.f, Ephi.vnn): yawSpeed.sn,
+    (distance.vf, Ephi.vnn): yawSpeed.sn,
 
     (distance.o, Ephi.tnn): yawSpeed.vsn,
-    (distance.n, Ephi.tnn): yawSpeed.vsn,
-    (distance.f, Ephi.tnn): yawSpeed.vsn,
+    (distance.n, Ephi.tnn): yawSpeed.sn,
+    (distance.f, Ephi.tnn): yawSpeed.vfn,
     (distance.vf, Ephi.tnn): yawSpeed.vsn,
 
     (distance.o, Ephi.o): yawSpeed.o,
@@ -181,37 +122,37 @@ yawSpeed_rules = Rule({
     (distance.o, Ephi.tnp): yawSpeed.vsp,
     (distance.n, Ephi.tnp): yawSpeed.vsp,
     (distance.f, Ephi.tnp): yawSpeed.vsp,
-    (distance.vf, Ephi.tnp): yawSpeed.vsp,
+    (distance.vf, Ephi.tnp): yawSpeed.sp,
 
     (distance.o, Ephi.vnp): yawSpeed.vsp,
     (distance.n, Ephi.vnp): yawSpeed.vsp,
-    (distance.f, Ephi.vnp): yawSpeed.vsp,
-    (distance.vf, Ephi.vnp): yawSpeed.sp,
+    (distance.f, Ephi.vnp): yawSpeed.sp,
+    (distance.vf, Ephi.vnp): yawSpeed.vfp,
 
     (distance.o, Ephi.np): yawSpeed.vsp,
     (distance.n, Ephi.np): yawSpeed.vsp,
-    (distance.f, Ephi.np): yawSpeed.vsp,
-    (distance.vf, Ephi.np): yawSpeed.sp,
+    (distance.f, Ephi.np): yawSpeed.vvfp,
+    (distance.vf, Ephi.np): yawSpeed.vvfp,
 
     (distance.o, Ephi.fp): yawSpeed.sp,
     (distance.n, Ephi.fp): yawSpeed.sp,
-    (distance.f, Ephi.fp): yawSpeed.sp,
-    (distance.vf, Ephi.fp): yawSpeed.fp,
+    (distance.f, Ephi.fp): yawSpeed.vfp,
+    (distance.vf, Ephi.fp): yawSpeed.vvfp,
 
-    (distance.o, Ephi.vfp): yawSpeed.sp,
-    (distance.n, Ephi.vfp): yawSpeed.sp,
-    (distance.f, Ephi.vfp): yawSpeed.fp,
-    (distance.vf, Ephi.vfp): yawSpeed.fp,
+    (distance.o, Ephi.vfp): yawSpeed.fp,
+    (distance.n, Ephi.vfp): yawSpeed.fp,
+    (distance.f, Ephi.vfp): yawSpeed.vfp,
+    (distance.vf, Ephi.vfp): yawSpeed.vvfp,
 
-    (distance.o, Ephi.vvfp): yawSpeed.sp,
-    (distance.n, Ephi.vvfp): yawSpeed.fp,
-    (distance.f, Ephi.vvfp): yawSpeed.fp,
-    (distance.vf, Ephi.vvfp): yawSpeed.fp,
+    (distance.o, Ephi.vvfp): yawSpeed.fp,
+    (distance.n, Ephi.vvfp): yawSpeed.vfp,
+    (distance.f, Ephi.vvfp): yawSpeed.vfp,
+    (distance.vf, Ephi.vvfp): yawSpeed.vvfp,
 
-    (distance.o, Ephi.tvfp): yawSpeed.fp,
-    (distance.n, Ephi.tvfp): yawSpeed.fp,
-    (distance.f, Ephi.tvfp): yawSpeed.fp,
-    (distance.vf, Ephi.tvfp): yawSpeed.fp
+    (distance.o, Ephi.tvfp): yawSpeed.vfp,
+    (distance.n, Ephi.tvfp): yawSpeed.vvfp,
+    (distance.f, Ephi.tvfp): yawSpeed.vvfp,
+    (distance.vf, Ephi.tvfp): yawSpeed.vvfp
 })
 
 
@@ -310,8 +251,8 @@ class Robot():
         interpolated_trajectory = interpolate_points(waypoints, num_points=10)
 
         f = np.array([
-            [lambda x, vx: x + 0.1 * vx],
-            [lambda y, vy: y + 0.1 * vy],
+            [lambda x, vx: x + 0.025 * vx],
+            [lambda y, vy: y + 0.025 * vy],
             [lambda vx, vy, alpha: math.sqrt(vx ** 2 + vy ** 2) * np.cos(np.deg2rad(alpha))],
             [lambda vx, vy, alpha: math.sqrt(vx ** 2 + vy ** 2) * np.sin(np.deg2rad(alpha))],
             [lambda alpha: alpha]
@@ -328,8 +269,8 @@ class Robot():
             vx ** 2 + vy ** 2) != 0 else 0
         dfvydalpha = lambda vx, vy, alpha: np.cos(alpha) * math.sqrt(vx ** 2 + vy ** 2)
         F = np.array([
-            [1, 0, 0.005, 0, 0],
-            [0, 1, 0, 0.005, 0],
+            [1, 0, 0.025, 0, 0],
+            [0, 1, 0, 0.025, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 1]
@@ -353,10 +294,6 @@ class Robot():
             return newX, newP
 
         HGPS = np.eye(5)
-        HOBD = np.array([
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 1, 0],
-        ])
 
         Q = np.array([
             [0, 0, 0, 0, 0],
@@ -365,10 +302,7 @@ class Robot():
             [0, 0, 0, 0.03, 0],
             [0, 0, 0, 0, 5]]
         )
-        R1 = np.array([
-            [-1, 0],
-            [0, -1]
-        ])
+
         R2 = np.array([
             [0.05, 0, 0, 0, 0],
             [0, 0.05, 0, 0, 0],
@@ -395,7 +329,10 @@ class Robot():
             print(f"NEXT POINT {t}")
 
             while True:
-                self.get_data()
+                try:
+                    self.get_data()
+                except:
+                    print('get_data error')
 
                 dx = t[0] - self.robot_x
                 dy = t[1] - self.robot_y
@@ -422,7 +359,6 @@ class Robot():
                 if abs(theta) <= 5:
                     angle_to_target = 0
                     angle_to_turn = 0
-                    print("Робот в пределах максимального отклонения")
 
                 self.AtTa_data.append(angle_to_target)
                 self.AtTu_data.append(angle_to_turn)
@@ -441,7 +377,7 @@ class Robot():
 
                 try:
                     values = {distance: float(dist), Ephi: float(angle_to_turn)}
-                    v = velocity_rules(values)
+                    v = velocity_rules(values) if velocity_rules(values) else 0
                     ys = yawSpeed_rules(values)
                     print(f"V = {v}, ys={ys}")
                     if -0.07 < ys < 0.07:
@@ -474,18 +410,18 @@ class Robot():
                 X, P = sense(np.array([
                     [self.pos_data[-1][0]],
                     [self.pos_data[-1][1]],
-                    [self.velocity_data[-1][0]],
-                    [self.velocity_data[-1][1]],
+                    [self.velocity_data[-1][0]*np.cos(self.robot_yaw)],
+                    [self.velocity_data[-1][0]*np.sin(self.robot_yaw)],
                     [self.yaw_data[-1][2]]
                 ]), X, HGPS, P, R2)
-                print(X)
                 answer.append(X)
 
                 self.robot_yaw = X[4][0]
                 self.robot_x = X[0][0]
                 self.robot_y = X[1][0]
-
-                print(f"Kalman New position: x = {self.robot_x}, y = {self.robot_y}, yaw = {np.rad2deg(self.robot_yaw)}")
+                print(f"VelX = {X[2][0]}, VelY = {X[3][0]}")
+                print(f"Kalman New position: x = {self.robot_x}, y = {self.robot_y},\n"
+                      f"yaw_deg = {np.rad2deg(self.robot_yaw)}; yaw_rad = {self.robot_yaw}")
 
                 if dist <= 0.07:
                     break
