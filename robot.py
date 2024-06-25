@@ -47,9 +47,9 @@ Ephi.vfn = triangular(-130, -90, c=-115)
 Ephi.fn = triangular(-95, -50, c=-75)
 Ephi.nn = triangular(-60, -40, c=-50) #near negative
 Ephi.vnn = triangular(-45, -17, c=-30)
-Ephi.tnn = triangular(-20, -7, c=-14) #too near negative
-Ephi.o = triangular(-10, 10, c=0) #zero
-Ephi.tnp = triangular(7, 20, c=14)
+Ephi.tnn = triangular(-20, -5, c=-14) #too near negative
+Ephi.o = triangular(-5, 5, c=0) #zero
+Ephi.tnp = triangular(5, 20, c=14)
 Ephi.vnp = triangular(17, 45, c=30) #very near posiive
 Ephi.np = triangular(40, 60, c=50)
 Ephi.fp = triangular(50, 95, c=75) #far positive
@@ -214,6 +214,7 @@ yawSpeed_rules = Rule({
     (distance.vf, Ephi.tvfp): yawSpeed.fp
 })
 
+
 def predict(X, F, U, P, Q):
     newX = F @ X + U
     newP = F @ P @ F.T + Q
@@ -285,10 +286,10 @@ class Robot():
         self.conn.send(cmd_bytes)
         self.save_data()
 
-    def move_forward(self, v):
+    def move_forward(self, v, vs): #v-linear; vs - side
         self.hcmd.mode = MotorModeHigh.VEL_WALK
         self.hcmd.gaitType = GaitType.TROT
-        self.hcmd.velocity = [v, 0]
+        self.hcmd.velocity = [v, vs]
         self.hcmd.yawSpeed = 0
         self.hcmd.footRaiseHeight = 0.1
         cmd_bytes = self.hcmd.buildCmd(debug=False)
@@ -308,45 +309,85 @@ class Robot():
         self.before_start()
         interpolated_trajectory = interpolate_points(waypoints, num_points=10)
 
-        F1 = np.array([
-            [1, 0, 0.005, 0],
-            [0, 1, 0, 0.005],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]
+        f = np.array([
+            [lambda x, vx: x + 0.1 * vx],
+            [lambda y, vy: y + 0.1 * vy],
+            [lambda vx, vy, alpha: math.sqrt(vx ** 2 + vy ** 2) * np.cos(np.deg2rad(alpha))],
+            [lambda vx, vy, alpha: math.sqrt(vx ** 2 + vy ** 2) * np.sin(np.deg2rad(alpha))],
+            [lambda alpha: alpha]
+        ])
+
+        dfvxdvx = lambda vx, vy, alpha: vx * np.cos(alpha) / math.sqrt(vx ** 2 + vy ** 2) if math.sqrt(
+            vx ** 2 + vy ** 2) != 0 else 0
+        dfvxdvy = lambda vx, vy, alpha: vy * np.cos(alpha) / math.sqrt(vx ** 2 + vy ** 2) if math.sqrt(
+            vx ** 2 + vy ** 2) != 0 else 0
+        dfvxdalpha = lambda vx, vy, alpha: -np.sin(alpha) * math.sqrt(vx ** 2 + vy ** 2)
+        dfvydvx = lambda vx, vy, alpha: vx * np.sin(alpha) / math.sqrt(vx ** 2 + vy ** 2) if math.sqrt(
+            vx ** 2 + vy ** 2) != 0 else 0
+        dfvydvy = lambda vx, vy, alpha: vy * np.sin(alpha) / math.sqrt(vx ** 2 + vy ** 2) if math.sqrt(
+            vx ** 2 + vy ** 2) != 0 else 0
+        dfvydalpha = lambda vx, vy, alpha: np.cos(alpha) * math.sqrt(vx ** 2 + vy ** 2)
+        F = np.array([
+            [1, 0, 0.005, 0, 0],
+            [0, 1, 0, 0.005, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1]
+        ])
+
+        def moveEKF(X, U, P, f, F, Q):
+            F[2, 2] = dfvxdvx(X[2, 0], X[3, 0], X[4, 0])
+            F[2, 3] = dfvxdvy(X[2, 0], X[3, 0], X[4, 0])
+            F[2, 4] = dfvxdalpha(X[2, 0], X[3, 0], X[4, 0])
+            F[3, 2] = dfvydvx(X[2, 0], X[3, 0], X[4, 0])
+            F[3, 3] = dfvydvy(X[2, 0], X[3, 0], X[4, 0])
+            F[3, 4] = dfvydalpha(X[2, 0], X[3, 0], X[4, 0])
+            newX = np.array([
+                [f[0, 0](X[0, 0], X[2, 0])],
+                [f[1, 0](X[1, 0], X[3, 0])],
+                [f[2, 0](X[2, 0], X[3, 0], X[4, 0])],
+                [f[3, 0](X[2, 0], X[3, 0], X[4, 0])],
+                [f[4, 0](X[4, 0])]
+            ])
+            newP = F @ P @ F.T + Q
+            return newX, newP
+
+        HGPS = np.eye(5)
+        HOBD = np.array([
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0],
         ])
 
         Q = np.array([
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0.01, 0],
-            [0, 0, 0, 0.01]
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0.03, 0, 0],
+            [0, 0, 0, 0.03, 0],
+            [0, 0, 0, 0, 5]]
+        )
+        R1 = np.array([
+            [-1, 0],
+            [0, -1]
+        ])
+        R2 = np.array([
+            [0.05, 0, 0, 0, 0],
+            [0, 0.05, 0, 0, 0],
+            [0, 0, 0.2, 0, 0],
+            [0, 0, 0, 0.2, 0],
+            [0, 0, 0, 0, 5]
         ])
 
-        R1 = np.array([  # Матрица для одометра будет изменятся
-            [-1, 0],  # в соответствии с измеренной скоростью ODB
-            [0, -1]  # как VelOBD(X/Y) * 0.1 + 1.1 (из 3 задания)
-        ])
-
-        R2 = np.array([  # Матрица для GPS
-            [0.1, 0, 0, 0],
-            [0, 0.1, 0, 0],
-            [0, 0, 0.1, 0],
-            [0, 0, 0, 0.4]
-        ])
-
-        H_1 = np.array([
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]
-        ])
-
-        X = np.zeros((4, 1))
+        X = np.zeros((5, 1))
         P = np.array([
-            [0.1, 0, 0, 0],
-            [0, 0.1, 0, 0],
-            [0, 0, 0.5, 0],
-            [0, 0, 0, 0.5]
+            [3, 0, 0, 0, 0],
+            [0, 3, 0, 0, 0],
+            [0, 0, 0.1, 0, 0],
+            [0, 0, 0, 0.1, 0],
+            [0, 0, 0, 0, 5]
         ])
+
         answer = []
+        p0 = [0, 0]
         for t in waypoints:
             if self.EMERGENCY_STOP:
                 self.emergency_stop()
@@ -360,15 +401,28 @@ class Robot():
                 dy = t[1] - self.robot_y
                 dist = np.sqrt(dx ** 2 + dy ** 2)
                 angle_to_target = np.degrees(np.arctan2(dy, dx))
-                angle_to_turn = angle_to_target - self.robot_yaw
+
+                d = np.array([t[0] - p0[0], t[1] - p0[1]])
+                r = np.array([np.cos(self.robot_yaw), np.sin(self.robot_yaw)])
+                d_norm = np.linalg.norm(d)
+                r_norm = np.linalg.norm(r)
+
+                angle_to_turn = angle_to_target - np.rad2deg(self.robot_yaw)
 
                 if angle_to_turn > 180:
                     angle_to_turn -= 360
                 elif angle_to_turn < -180:
                     angle_to_turn += 360
 
-                if -7 < angle_to_turn < 7:
+                if -5 < angle_to_turn < 5:
                     angle_to_turn = 0
+
+                theta = np.degrees(np.arccos(np.dot(d, r) / (d_norm * r_norm)))
+                print(d, r, theta)
+                if abs(theta) <= 5:
+                    angle_to_target = 0
+                    angle_to_turn = 0
+                    print("Робот в пределах максимального отклонения")
 
                 self.AtTa_data.append(angle_to_target)
                 self.AtTu_data.append(angle_to_turn)
@@ -404,41 +458,40 @@ class Robot():
                     except Exception as e:
                         print("Rotate error", e)
                         break
-                print(f"1) Gyro_speed = {self.gyro_data[-1][0]}, velocity = {self.velocity_data[-1][0]}, {self.velocity_data[-1][1]}")
                 time.sleep(0.001)
                 try:
-                    self.move_forward(v)
+                    self.move_forward(v, 0)
                 except Exception as e:
                     print("Move forward error", e)
                     break
                 time.sleep(0.001)
 
                 print(f"2) Gyro_speed = {self.gyro_data[-1][0]}, velocity = {self.velocity_data[-1][0]}, {self.velocity_data[-1][1]}\n"
-                      f"Robot measurements: x = {self.pos_data[-1][0]}, y = {self.pos_data[-1][1]}")
+                      f"Robot measurements: x = {self.pos_data[-1][0]}, y = {self.pos_data[-1][1]}, yaw = {self.yaw_data[-1][2]}")
 
-                X, P = predict(X, F1, np.zeros((4, 1)), P, Q)
-                print(X)
+                X, P = moveEKF(X, np.zeros((5,1)), P, f, F, Q)
 
                 X, P = sense(np.array([
                     [self.pos_data[-1][0]],
                     [self.pos_data[-1][1]],
                     [self.velocity_data[-1][0]],
-                    [self.velocity_data[-1][1]]
-                ]), X, np.eye(4), P, R2)
+                    [self.velocity_data[-1][1]],
+                    [self.yaw_data[-1][2]]
+                ]), X, HGPS, P, R2)
                 print(X)
                 answer.append(X)
 
-                self.robot_yaw = np.rad2deg(self.yaw_data[-1][2])
+                self.robot_yaw = X[4][0]
                 self.robot_x = X[0][0]
                 self.robot_y = X[1][0]
 
-                print(f"Kalman New position: x = {self.robot_x}, y = {self.robot_y}, yaw = {self.robot_yaw}")
+                print(f"Kalman New position: x = {self.robot_x}, y = {self.robot_y}, yaw = {np.rad2deg(self.robot_yaw)}")
 
-                if dist <= 0.03:
+                if dist <= 0.07:
                     break
 
             self.app.map.update_robot_position(x=self.robot_x, y=self.robot_y, angle=self.robot_yaw)
-
+            p0 = t
             time.sleep(0.05)
 
 
